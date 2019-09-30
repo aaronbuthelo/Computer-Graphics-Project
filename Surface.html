@@ -1,0 +1,136 @@
+<html>
+
+<head>
+	<title> Surface </title>
+	<style>
+		body
+		{
+			margin: 0;
+		}
+		canvas
+		{
+			width: 100%;
+			height: 100%
+		}
+	</style>
+</head>
+
+<body>
+
+<style>
+    .container{
+        position: absolute;
+        top:30px;
+        right:50px;
+        background-color: #000000; 
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 50%;
+        -webkit-transition-duration: 0.4s; 
+        transition-duration: 0.4s;
+	font-family: Arial,Helvetica,sans-serif;
+ 	font-size: 20px;
+}
+
+        .container:hover {
+        background-color: #0efef0; 
+        color: #000000;
+}
+
+.button{
+	color: #ffffff;
+	text-decoration:none;
+}
+    
+    </style>
+        <div class="container">
+                
+                <a href="CGmain.html" class="button">HOME</a>
+              </div>
+
+
+	<script src="http://mrdoob.github.com/three.js/build/three.min.js"></script>
+	<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+
+	<script>
+		(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();stats.domElement.style.cssText='position:fixed;left:0;top:0;z-index:10000';document.body.appendChild(stats.domElement);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()
+		
+
+		var scene = new THREE.Scene( );
+		var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		var renderer = new THREE.WebGLRenderer( );
+		renderer.setSize( window.innerWidth, window.innerHeight );
+		document.body.appendChild( renderer.domElement );
+	
+		window.addEventListener( 'resize', function( )
+		{
+			var WIDTH = window.innerWidth;
+			var HEIGHT = window.innerHeight;
+			renderer.setSize( WIDTH, HEIGHT );
+			camera.aspect = WIDTH / HEIGHT;
+			camera.updateProjectionMatrix( );
+		} );
+
+
+		controls = new THREE.OrbitControls( camera, renderer.domElement );
+		camera.position.z = 7;
+		
+
+		var geometry = new THREE.CubeGeometry( 1000, 1000, 1000 );
+		var cubeMaterials =
+		[
+			new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader( ).load( 'img/iceflats_ft.png' ), side: THREE.DoubleSide } ), 
+			new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader( ).load( 'img/iceflats_bk.png' ), side: THREE.DoubleSide } ), 
+			new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader( ).load( 'img/iceflats_up.png' ), side: THREE.DoubleSide } ), 
+			new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader( ).load( 'img/iceflats_dn.png' ), side: THREE.DoubleSide } ), 
+			new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader( ).load( 'img/iceflats_rt.png' ), side: THREE.DoubleSide } ), 
+			new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader( ).load( 'img/iceflats_lf.png' ), side: THREE.DoubleSide } )
+		];
+	
+		var MMaterial = new THREE.MeshFaceMaterial( cubeMaterials );
+
+		var bowl = new THREE.Mesh( geometry, MMaterial );
+		scene.add( bowl );
+
+
+		var ambientLight = new THREE.AmbientLight( 0xFFFFFF, 0.5 );
+		scene.add( ambientLight );
+		
+		var firstlight = new THREE.PointLight( 0xff0000, 3, 40 );
+		scene.add( firstlight );
+		
+		var secondlight = new THREE.PointLight( 0x0000ff, 4, 40 );
+		scene.add( secondlight );
+		
+		var thirdlight = new THREE.PointLight( 0x00ff00, 5, 40 );
+		scene.add( thirdlight );
+		
+		var direction = new THREE.DirectionalLight( 0xFFFFFF, 1 );
+		direction.position.set( 0, 1, 0 );
+		scene.add( direction );
+		
+		var Pot = new THREE.SpotLight( 0xff55ff, 25 );
+		Pot.position.set( 0, 3, 0 );
+		scene.add( Pot );
+	
+		var render = function( )
+		{
+			renderer.render( scene, camera );
+		};
+	
+		var Main = function( )
+		{
+			requestAnimationFrame( Main );
+			//update( );
+			render( );
+		};
+		Main( );
+	</script>
+</body>
+
+</html>

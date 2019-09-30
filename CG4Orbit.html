@@ -1,0 +1,558 @@
+<html>
+
+
+
+<head>
+
+<title> SPACE </title>
+
+<style>
+	body {margin:0; background: #000;}
+	canvas {width: 100%; height: 100%}
+
+</style>
+
+</head>
+
+
+
+<body>
+
+
+<body>
+    <style>
+    .container{
+        position: absolute;
+        top:30px;
+        right:50px;
+        background-color: #000000; 
+        border: none;
+        
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        
+        border-radius: 50%;
+        -webkit-transition-duration: 0.4s; 
+        transition-duration: 0.4s;
+	font-family: Arial,Helvetica,sans-serif;
+ 	font-size: 20px;
+}
+    .container:hover {
+        background-color: #0efef0; 
+        color: #000000;
+}
+	.button{
+	color: #ffffff;
+	text-decoration: none;
+    }
+    </style>
+        <div class="container">
+                
+                <a href="Surface.html" class="button">NEXT</a>
+              </div>
+            
+
+	<script src="http://mrdoob.github.com/three.js/build/three.min.js"></script>
+	
+	<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+	
+	<script src="a.js"></script>
+	
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js"></script>
+
+<div id="universe">
+</div>
+
+<script>
+
+var scene;
+var camera;
+var controls;
+var t = 0;
+var asus = new THREE.Vector3(); 
+   
+var point;
+   
+var asus;
+var ship1;
+var up = new THREE.Vector3( 0, 1, 0);
+ 
+
+
+
+
+
+
+//THE MAIN FUNCTION
+
+	Rocket = function(){
+
+
+        this.ship = new THREE.Object3D();
+	this.shipTween = TweenMax.set(this.ship.position, {x:0});
+
+//THE ROCKET MATERIAL
+
+	this.bodyMaterial = new THREE.MeshLambertMaterial ({
+		color: 0xf2efef,
+		
+	});
+
+
+//THE RING MATERIAL
+
+	this.ringMaterial = new THREE.MeshLambertMaterial ({
+		color: 0x282628,
+		
+	});
+
+
+
+//THE METAL MATERIAL
+
+	this.MetalMaterial = new THREE.MeshLambertMaterial ({
+		color: 0x81878d,
+		
+	});
+
+//BODY OF THE ROCKET
+
+	var footGeometry = new THREE.SphereGeometry(30, 10, 30);
+
+
+
+
+
+	this.middle = new THREE.Object3D();
+
+
+	
+
+
+//BODY OF ROCKET
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	this.CenterMid = makeSphere(100, 25, 25,this.bodyMaterial);
+	this.CenterMid.position.y = 116;
+
+
+//body of rocket
+
+
+	this.middle.add(this.CenterMid);
+
+
+	
+
+	
+
+
+
+
+
+
+
+
+//rocket body formation
+
+
+
+	this.ship.add(this.middle);
+	
+
+	
+
+}
+
+//Fly function
+
+var radhian;
+var percept;
+Rocket.prototype.flyPath = function(){
+	point = spline.getPoint( t );
+	percept = spline.getTangent( t ).normalize();
+	asus.crossVectors( up, percept ).normalize();
+	radhian = Math.acos( up.dot( percept ) );
+	var quaterions = this.ship.quaternion.setFromAxisAngle( asus, radhian );
+
+
+
+
+
+	this.shipTween.kill();
+	this.tweenPosition = TweenMax.to(ship1.ship.position, 0.1, {x:point.x, y: point.y, z: point.z});
+	this.tweenQuaternion = TweenMax.to(this.ship.quaternion, 0.1,
+		{
+			x: quaterions._x,
+			y: quaterions._y,
+			z: quaterions._z});
+
+		t = (t >= 1) ? 0 : t += 0.0008;
+}
+
+
+
+
+//Smoke function
+
+   var EarthCCD;
+
+
+function setSmokeCoords(){
+	ship1.CenterMid.geometry.computeBoundingBox();
+	var boundingBox = ship1.CenterMid.geometry.boundingBox;
+	EarthCCD = new THREE.Vector3();
+	EarthCCD.subVectors( boundingBox.max, boundingBox.min );
+	EarthCCD.multiplyScalar( 0.5 );
+	EarthCCD.add( boundingBox.min );
+	EarthCCD.applyMatrix4( ship1.CenterMid.matrixWorld );
+}
+
+
+
+
+//Smoke drop function
+
+function dropSmoke(s) {
+
+	s.mesh.material.opacity = 1;
+	s.mesh.position.x = EarthCCD.x;
+	s.mesh.position.y = EarthCCD.y;
+	s.mesh.position.z = EarthCCD.z;
+	s.mesh.scale.set(0.1, 0.1, 0.1);
+
+	var smokeTl = new TimelineMax();
+
+	var tweenSmokeEnter = TweenMax.to(s.mesh.scale, Math.random() * 1 + 0.3, {
+		x: Math.random() * 1 + 0.7,
+		y: Math.random() * 1 + 0.7,
+		z: Math.random() * 1 + 0.7,
+		delay: 0.1,
+		ease: Strong.easeOut
+	});
+	var tweenSmokeLeave = TweenMax.to(s.mesh.scale, 0.5, {
+		x: 0.1,
+		y: 0.1,
+		z: 0.1,
+		ease: Strong.easeIn,
+		onComplete: resetSmoke,
+		onCompleteParams:[s]
+	});
+	smokeTl.add(tweenSmokeEnter).add(tweenSmokeLeave, 0.6).play();
+}
+
+
+
+//Waste from smoke
+
+
+
+function createDroppingWaste(){
+	var s = getSmokeParticle();
+	dropSmoke(s);
+}
+
+
+
+var smokeRecycle = [];
+
+//smoke particals 
+
+function getSmokeParticle(){
+	if (smokeRecycle.length){
+		return smokeRecycle.pop();
+	}else{
+		return new SmokeParticle();
+	}
+}
+
+
+//To get smoke back
+
+function resetSmoke(s){
+	s.mesh.position.x = 0;
+	s.mesh.position.y = 0;
+	s.mesh.position.z = 0;
+	s.mesh.rotation.x = Math.random()*Math.PI*2;
+	s.mesh.rotation.y = Math.random()*Math.PI*2;
+	s.mesh.rotation.z = Math.random()*Math.PI*2;
+	s.mesh.scale.set(.1,.1,.1);
+	s.mesh.material.opacity = 0;
+	s.material.needUpdate = true;
+	scene.add(s.mesh);
+	smokeRecycle.push(s);
+}
+
+
+
+
+
+//smoke particals
+
+
+function SmokeParticle() {
+	this.geometry = new THREE.IcosahedronGeometry( 75, 1 );
+	this.material = new THREE.MeshLambertMaterial({
+		color: 'black', shading: THREE.FlatShading, transparent: true
+	});
+	this.mesh = new THREE.Mesh(this.geometry, this.material);
+	resetSmoke(this);
+}
+
+
+
+//update smoke
+
+var freq = 0;
+   var freqCT = 0;
+
+
+function updateSmokeArr(){
+	if (freqCT % freq == 0){
+		createDroppingWaste();
+	}
+	freqCT++;
+}
+
+
+
+
+//Create rocket
+
+
+
+function createPlane(){
+	ship1 = new Rocket();
+	scene.add(ship1.ship);
+}
+
+
+
+//Create path
+
+
+function createWay(){
+	spline =  new THREE.Curves.CinquefoilKnot(500);
+
+	var material = new THREE.LineBasicMaterial({color : 0x141111});
+	var geometryt = new THREE.Geometry();
+	for(var i = 0; i < spline.getPoints(100).length; i++){
+		geometryt.vertices.push(spline.getPoints(100)[i]);
+	}
+
+	line = new THREE.Line(geometryt, material);
+	scene.add(line);
+}
+
+
+
+
+//Create Earth
+
+	function createEarth(){
+	EarthMaterial =  new THREE.MeshPhongMaterial();
+	EarthMaterial.map   = THREE.ImageUtils.loadTexture('img/EARTH.jpg');
+	EarthMaterial.side  = THREE.BackSide;
+		
+
+
+	var EarthGeo = new THREE.SphereGeometry(300, 32, 32);
+	EarthYea = new THREE.Mesh(EarthGeo, EarthMaterial);
+
+	scene.add( EarthYea );
+}
+
+var  p1Light;
+   var p2Light;
+var pointLight;
+   var light;
+ 
+
+//Create Lighting
+
+	function createBrights() {
+	light = new THREE.HemisphereLight(0x000000, 0xffffff, 3);
+	light.position.set(5,5,0);
+
+	pointLight = new THREE.PointLight(0xff0000, 5, 0.5);
+	pointLight.position.set(0,0,-5);
+	
+	p1Light = new THREE.DirectionalLight(0xffffff, .3);
+	p1Light.position.set(200, 200, 200);
+	p1Light.castShadow = true;
+	p1Light.shadowDarkness = .2;
+
+	p2Light = new THREE.DirectionalLight(0xffffff, .3);
+	p2Light.position.set(-100, 200, 50);
+	p2Light.shadowDarkness = .1;
+	p2Light.castShadow = true;
+
+
+
+	scene.add(light);
+	scene.add(p2Light);
+	scene.add(p1Light);
+	scene.add(pointLight);
+	
+	
+}
+
+
+
+
+function makeSphere(RAD, width, height, mat) {
+	var geom = new THREE.SphereGeometry(RAD, width, height);
+	var mesh = new THREE.Mesh(geom, mat);
+	return mesh;
+}
+
+
+
+ var HITT;
+   var WIDD;
+
+
+function onWindowResize() {
+	HITT = window.innerHeight;
+	WIDD = window.innerWidth;
+	mirrorX = WIDD / 2;
+	mirrorY = HITT / 2;
+	renderer.setSize(WIDD, HITT);
+	camera.aspect = WIDD / HITT;
+	camera.updateProjectionMatrix();
+}
+
+//Renderer
+ var renderer; var mirrorX;
+   var mirrorY;
+
+function render(){
+	renderer.render(scene, camera);
+	
+}
+
+
+
+//Animate
+
+function animate(){
+	requestAnimationFrame(animate);
+	render();
+	setSmokeCoords();
+	ship1.flyPath();
+	updateSmokeArr();
+	var currentSeconds = Date.now();
+
+	EarthYea.rotation.y += 0.005;
+	
+	controls.update();
+}
+
+
+
+//init funtion
+
+  
+   var boxer;
+
+function init(){
+	scene = new THREE.Scene();
+	HITT = window.innerHeight;
+	WIDD = window.innerWidth;
+	camera = new THREE.PerspectiveCamera( 60, WIDD / HITT, 1, 20000);
+
+	camera.position.z = 2500;
+	camera.position.y = 1500;
+	camera.position.x = 1200;
+	renderer = new THREE.WebGLRenderer({alpha: true, antialias: true });
+	renderer.setSize(WIDD, HITT);
+
+	boxer = document.getElementById('universe');
+	boxer.appendChild(renderer.domElement);
+
+	mirrorX = WIDD / 2;
+	mirrorY = HITT / 2;
+
+	window.addEventListener('resize', onWindowResize, false);
+	controls = new THREE.OrbitControls( camera, renderer.domElement);
+}
+
+
+
+THREE.Curves = {};
+THREE.Curves.CinquefoilKnot = THREE.Curve.create(
+
+
+
+
+
+	function(s) {
+
+		this.scale = (s === undefined) ? 5 : s;
+
+	},
+
+
+
+
+
+	function(t) {
+
+		
+
+	var a = 2,
+			b = 2;
+		t *= Math.PI * 2;
+		var tx = (2 + Math.cos(b+a * t)) * Math.cos(a+b * t),
+			ty = (2 + Math.cos(b * t)) * Math.sin(a * t),
+			tz = Math.sin(b+a * t);
+
+		return new THREE.Vector3(tx, ty, tz).multiplyScalar(this.scale);
+
+	}
+
+);
+
+
+
+
+init();
+createBrights();
+createPlane();
+createWay();
+createEarth();
+animate();
+
+
+
+
+
+
+
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,147 @@
+<html>
+    <head>
+<title> Rotation</title>
+<style>
+body { margin: 0; }
+canvas { width: 100%; height: 100% }
+</style>
+</head>
+
+<body>
+        <style>
+        .container{
+            position: absolute;
+            top:30px;
+            left:50px;
+            background-color: #000000; 
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 50%;
+            -webkit-transition-duration: 0.4s; 
+            transition-duration: 0.4s;
+        font-family: Arial,Helvetica,sans-serif;
+         font-size: 20px;
+    }
+    
+            .container:hover {
+            background-color: #0efef0; 
+            color: #000000;
+    }
+    
+    .button{
+        color: #ffffff;
+        text-decoration:none;
+    }
+        
+        </style>
+            <div class="container">
+                    
+                    <a href="CG4Earth.html" class="button">NEXT</a>
+                  </div>
+
+
+
+    
+  <script src="http://mrdoob.github.com/three.js/build/three.min.js"></script>
+  
+<script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.1/dat.gui.min.js"></script> 
+  <script>
+
+      var color = 0x0000ff;
+
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .1, 500);
+    var renderer = new THREE.WebGLRenderer();
+  
+    renderer.setClearColor(0xdddddd);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMapEnabled = true;
+    renderer.shadowMapSoft = true;
+  
+    var axis = new THREE.AxisHelper(10);
+    scene.add(axis);
+
+    var grid = new THREE.GridHelper(50, 5);
+    var color = new THREE.Color("rgb(0,0,0)");
+    grid.setColors(color, 0xffffff);
+
+    scene.add(grid);
+  
+    var CGeometry = new THREE.BoxGeometry(5, 5, 5);
+    var CMaterial = new THREE.MeshLambertMaterial({
+      color: 0xffdd00
+    
+    });
+    var cube = new THREE.Mesh(CGeometry, CMaterial);
+  
+    cube.position.x = 2.5;
+    cube.position.y = 4;
+    cube.position.z = 2.5;
+    cube.recieveShadow = true;
+  
+    scene.add(cube);
+
+
+    var PGeometry = new THREE.PlaneGeometry(30,30,30);
+    var PMaterial = new THREE.MeshLambertMaterial({
+      color: 0xff0000
+    
+    }); 
+    var plane = new THREE.Mesh(PGeometry,PMaterial);
+
+    plane.rotation.x = -.5*Math.PI;
+    plane.recieveShadow = true;
+
+    scene.add(plane);
+
+
+    var spotLight = new THREE.SpotLight(0xffffff);
+    spotLight.castShadow = true;
+    spotLight.position.set (15,30,50);
+
+    scene.add(spotLight);
+  
+    camera.position.x = 40;
+    camera.position.y = 40;
+    camera.position.z = 40;
+  
+    camera.lookAt(scene.position);
+
+var guiControls = new function()
+{
+    this.rotationXaxis = 1;
+    this.rotationYaxis = 1;
+    this.rotationZaxis = 1; 
+}
+
+var datGUI = new dat.GUI();
+datGUI .add(guiControls, 'rotationXaxis', 0, 1);
+datGUI .add(guiControls, 'rotationYaxis', 0, 1);
+datGUI .add(guiControls, 'rotationZaxis', 0, 1);
+
+
+    render();
+
+    function render(){
+
+        cube.rotation.x += guiControls.rotationXaxis;
+        cube.rotation.y += guiControls.rotationYaxis;
+        cube.rotation.z += guiControls.rotationZaxis;
+        requestAnimationFrame(render);
+        renderer.render(scene, camera);
+
+    }
+  
+    renderer.render(scene, camera);
+    document.body.append(renderer.domElement);
+  
+
+
+</script>
+</body>
+</html>

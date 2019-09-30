@@ -1,0 +1,40 @@
+#box
+{
+	border:5px solid;
+	width: 1803px;
+	height: 978px;
+	margin-left: auto;
+	margin-right : auto;
+	padding: 10px;
+}
+#top-right
+{
+	margin-left : 914px;
+	float: right;
+}	
+
+#top-left
+{
+	margin-left : -2px;
+	margin-top: -481px;
+	float: left;
+}
+
+#bottom-left
+{
+	margin-top: 10px;
+	margin-left: -2px;
+	float : left;
+}
+
+#bottom-right
+{
+	margin-top : 10px;
+	float : right;
+	
+}
+
+.segment-fill
+{
+	fill:red;
+}
